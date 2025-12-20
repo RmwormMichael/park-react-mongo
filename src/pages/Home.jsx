@@ -127,7 +127,6 @@ export default function Home() {
         />
       </div>
       {/* Navegación minimalista */}
-      // Navegación minimalista - VERSIÓN MEJORADA PARA MÓVIL
       <nav className="relative z-50">
         <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-6">
           <div className="flex justify-between items-center">
