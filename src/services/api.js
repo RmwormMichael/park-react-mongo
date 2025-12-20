@@ -23,12 +23,14 @@ async function request(path, options = {}) {
   // log status
   console.log('[API] Response status]', res.status, res.statusText);
 
-  if (res.status === 401) {
-    // token inválido: limpiar y forzar login
-    clearToken();
-    window.location.href = '/login';
-    return;
-  }
+if (res.status === 401) {
+  // token inválido: limpiar y forzar login
+  clearToken();
+  // ✅ Dispara evento para que App.jsx redirija correctamente
+  window.dispatchEvent(new Event('authChange'));
+  // No hacemos redirección aquí, App.jsx se encargará
+  throw new Error('Sesión expirada. Por favor, inicia sesión nuevamente.');
+}
 
   // intenta parsear JSON, si no es JSON devuelve texto
   let data;

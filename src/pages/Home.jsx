@@ -366,13 +366,15 @@ const handleRegister = () => setModalType("register");
 
 {modalType === "login" && (
   <Modal onClose={() => setModalType(null)}>
-    <Login onSuccess={() => setModalType(null)} />
-  </Modal>
-)}
-
-{modalType === "register" && (
-  <Modal onClose={() => setModalType(null)}>
-    <Register onSuccess={() => setModalType(null)} />
+    <Login 
+      onSuccess={() => {
+        setModalType(null); // Cierra el modal
+        navigate('/dashboard'); // ✅ Navega al dashboard después del login
+      }}
+      onSwitchRegister={() => {
+        setModalType("register");
+      }}
+    />
   </Modal>
 )}
 

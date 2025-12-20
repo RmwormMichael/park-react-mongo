@@ -3,12 +3,14 @@ import api from "../services/api";
 import { saveToken } from "../services/auth";
 import { motion } from "framer-motion";
 import { LogIn, ShieldCheck } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function Login({ onSuccess, onSwitchRegister }) {
   const [correo, setCorreo] = useState("");
   const [contrasena, setContrasena] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   const fadeUp = {
     hidden: { opacity: 0, y: 25 },
@@ -30,11 +32,13 @@ export default function Login({ onSuccess, onSwitchRegister }) {
 
       saveToken(res.token);
 
+      window.dispatchEvent(new Event('authChange'));
+
       // 🔥 Cierra el modal
       if (onSuccess) onSuccess();
 
       // 🔥 Y recarga para que App detecte el token
-      window.location.href = "/";
+      navigate('/dashboard');
 
     } catch (err) {
       setError(err.message || "Error al iniciar sesión");
