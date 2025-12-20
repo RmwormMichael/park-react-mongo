@@ -422,19 +422,35 @@ export default function Home() {
           </div>
         </div>
       </footer>
-      {modalType === "login" && (
-        <Modal onClose={() => setModalType(null)}>
-          <Login
-            onSuccess={() => {
-              setModalType(null); // Cierra el modal
-              navigate("/dashboard"); //  Navega al dashboard después del login
-            }}
-            onSwitchRegister={() => {
-              setModalType("register");
-            }}
-          />
-        </Modal>
-      )}
+{modalType === "login" && (
+  <Modal onClose={() => setModalType(null)}>
+    <Login
+      onSuccess={() => {
+        setModalType(null); // Cierra el modal
+        navigate("/dashboard"); // ✅ Navega al dashboard después del login
+      }}
+      onSwitchRegister={() => {
+        setModalType("register"); // Cambia al modal de registro
+      }}
+    />
+  </Modal>
+)}
+
+
+{modalType === "register" && (
+  <Modal onClose={() => setModalType(null)}>
+    <Register
+      onSuccess={() => {
+        setModalType(null); // Cierra el modal
+        // Opcional: puedes redirigir al login después de registro exitoso
+        setModalType("login");
+      }}
+      onSwitchLogin={() => {
+        setModalType("login"); // Cambia al modal de login
+      }}
+    />
+  </Modal>
+)}
     </div>
   );
 }
