@@ -108,14 +108,14 @@ async function load() {
   // Función para obtener la URL de la imagen del usuario
   const getImageUrl = (fotoPerfil) => {
     if (!fotoPerfil) return null
-    const baseUrl = 'http://localhost:4000'
+    const baseUrl = 'https://api-park-mongo.onrender.com'
     return `${baseUrl}${fotoPerfil}`
   }
 
   // Función para obtener la URL de la imagen del vehículo
   const getVehicleImageUrl = (FotoVehiculo) => {
     if (!FotoVehiculo) return null
-    const baseUrl = 'http://localhost:4000'
+    const baseUrl = 'https://api-park-mongo.onrender.com'
     return `${baseUrl}${FotoVehiculo}`
   }
 

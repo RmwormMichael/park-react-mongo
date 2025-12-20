@@ -111,7 +111,7 @@ export default function VehiclesPage({ user }) {
       const token = getToken()
       
       // Usar fetch directamente para enviar FormData
-      const response = await fetch('http://localhost:4000/api/vehicles', {
+      const response = await fetch('https://api-park-mongo.onrender.com/api/vehicles', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -177,7 +177,7 @@ export default function VehiclesPage({ user }) {
   // Función para obtener la URL de la imagen del vehículo
   const getVehicleImageUrl = (FotoVehiculo) => {
     if (!FotoVehiculo) return null
-    const baseUrl = 'http://localhost:4000'
+    const baseUrl = 'https://api-park-mongo.onrender.com'
     return `${baseUrl}${FotoVehiculo}`
   }
 

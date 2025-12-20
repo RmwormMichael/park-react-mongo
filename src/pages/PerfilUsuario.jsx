@@ -44,7 +44,7 @@ const PerfilUsuario = () => {
       
       // Si ya tiene foto de perfil, cargarla
       if (data.FotoPerfil) {
-        const baseUrl = 'http://localhost:4000';
+        const baseUrl = 'https://api-park-mongo.onrender.com';
         setImagePreview(`${baseUrl}${data.FotoPerfil}`);
       }
       
@@ -113,7 +113,7 @@ const PerfilUsuario = () => {
         formDataToSend.append('fotoPerfil', profileImage);
       }
 
-      const response = await fetch(`http://localhost:4000/api/users/${userId}`, {
+      const response = await fetch(`https://api-park-mongo.onrender.com/api/users/${userId}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -131,7 +131,7 @@ const PerfilUsuario = () => {
 
       // Actualizar imagen de preview si se subió una nueva
       if (updatedUser.FotoPerfil) {
-        const baseUrl = 'http://localhost:4000';
+        const baseUrl = 'https://api-park-mongo.onrender.com';
         setImagePreview(`${baseUrl}${updatedUser.FotoPerfil}?t=${Date.now()}`);
       }
 
@@ -162,7 +162,7 @@ const PerfilUsuario = () => {
     });
     setProfileImage(null);
     if (userData?.FotoPerfil) {
-      const baseUrl = 'http://localhost:4000';
+      const baseUrl = 'https://api-park-mongo.onrender.com';
       setImagePreview(`${baseUrl}${userData.FotoPerfil}`);
     }
   };
