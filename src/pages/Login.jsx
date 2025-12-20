@@ -34,7 +34,7 @@ export default function Login({ onSuccess, onSwitchRegister }) {
       if (onSuccess) onSuccess();
 
       // 🔥 Y recarga para que App detecte el token
-      window.location.href = "/dashboard";
+      window.location.href = "/";
 
     } catch (err) {
       setError(err.message || "Error al iniciar sesión");
