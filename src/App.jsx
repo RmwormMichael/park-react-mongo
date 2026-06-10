@@ -60,7 +60,7 @@ export default function App() {
 
       <main className="app-main">
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={isAuth ? <Navigate to="/dashboard" /> : <Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
 
