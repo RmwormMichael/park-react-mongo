@@ -2,6 +2,7 @@
 import { getToken, clearToken } from './auth';
 
 const API_URL = 'https://api-park-mongo.onrender.com/api';
+//const API_URL = 'http://localhost:4000/api';
 
 async function request(path, options = {}) {
   const token = getToken();
