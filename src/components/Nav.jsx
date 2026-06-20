@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { clearToken, getToken } from '../services/auth';
-import jwt_decode from "jwt-decode";
+import { useAuth } from '../context/AuthContext';
 import { 
   Car, 
   LayoutDashboard, 
@@ -14,28 +13,14 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-export default function Nav({ updateAuth }) {
+export default function Nav() {
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const token = getToken();
-  let user = null;
+  const { user, logout } = useAuth();
 
-  if (token) {
-    try {
-      user = jwt_decode(token);
-    } catch (err) {
-      console.error("Token inválido:", err);
-    }
-  }
-
-  // MANTENIENDO EXACTAMENTE LA MISMA LÓGICA DE LOGOUT
-  const onLogout = () => { 
-    clearToken();
-    // Disparar evento para actualizar estado en App.jsx (IGUAL QUE ANTES)
-    window.dispatchEvent(new Event('authChange'));
-    navigate('/');
-    // Forzar recarga completa para asegurar estado limpio (IGUAL QUE ANTES)
-    window.location.reload();
+  const onLogout = () => {
+    sessionStorage.setItem('post_logout', 'true');
+    logout();
   };
 
   return (

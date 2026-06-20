@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Home from './pages/Home';
 import Login from './pages/Login';
@@ -9,54 +9,17 @@ import VehiclesPage from './pages/VehiclesPage';
 import MovimientosPage from './pages/MovimientosPage';
 import ReportesPage from './pages/ReportesPage';
 import Nav from './components/Nav';
-import { getToken } from './services/auth';
-import jwt_decode from "jwt-decode";
 import PerfilUsuario from './pages/PerfilUsuario';
+import { useAuth } from './context/AuthContext';
 
 export default function App() {
-  const [isAuth, setIsAuth] = useState(!!getToken());
-  const [decodedUser, setDecodedUser] = useState(null);
+  const { user: decodedUser, isAuth, loading } = useAuth();
 
-  // Función para actualizar estado de autenticación
-  const updateAuthStatus = () => {
-    const token = getToken();
-    setIsAuth(!!token);
-
-    if (token) {
-      try {
-        setDecodedUser(jwt_decode(token));
-      } catch (err) {
-        console.error("Token inválido:", err);
-        setDecodedUser(null);
-      }
-    } else {
-      setDecodedUser(null);
-    }
-  };
-
-  useEffect(() => {
-    updateAuthStatus();
-
-    const onStorage = (e) => {
-      if (e.key === 'sp_token') {
-        updateAuthStatus();
-      }
-    };
-    window.addEventListener('storage', onStorage);
-
-    const handleAuthChange = () => updateAuthStatus();
-    window.addEventListener('authChange', handleAuthChange);
-
-    return () => {
-      window.removeEventListener('storage', onStorage);
-      window.removeEventListener('authChange', handleAuthChange);
-    };
-  }, []);
+  if (loading) return null;
 
   return (
     <div className="app-root">
-      {/* Solo mostrar Nav si está autenticado */}
-      {isAuth && <Nav updateAuth={updateAuthStatus} />}
+      {isAuth && <Nav />}
 
       <main className="app-main">
         <Routes>

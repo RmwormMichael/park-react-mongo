@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { User, Mail, Phone, FileText, Camera, Save, X } from 'lucide-react';
-import { getToken } from '../services/auth';
+import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 
 const PerfilUsuario = () => {
   const navigate = useNavigate();
+  const { user: authUser } = useAuth();
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
@@ -23,15 +24,7 @@ const PerfilUsuario = () => {
 
   const fetchUserData = async () => {
     try {
-      const token = getToken();
-      if (!token) {
-        navigate('/login');
-        return;
-      }
-
-      // Decodificar token para obtener ID
-      const decoded = JSON.parse(atob(token.split('.')[1]));
-      const userId = decoded.id;
+      const userId = authUser?.id;
 
       const data = await api.request(`/users/${userId}`);
       setUserData(data);
@@ -44,7 +37,7 @@ const PerfilUsuario = () => {
       
       // Si ya tiene foto de perfil, cargarla
       if (data.FotoPerfil) {
-        const baseUrl = 'https://api-park-mongo.onrender.com';
+        const baseUrl = 'http://localhost:4000';
         setImagePreview(`${baseUrl}${data.FotoPerfil}`);
       }
       
@@ -97,12 +90,8 @@ const PerfilUsuario = () => {
     setSuccessMessage('');
 
     try {
-      const token = getToken();
-      const decoded = JSON.parse(atob(token.split('.')[1]));
-      const userId = decoded.id;
+      const userId = authUser?.id;
 
-      // Para enviar FormData, necesitamos usar fetch directamente
-      // ya que tu api.js actual no soporta FormData
       const formDataToSend = new FormData();
       formDataToSend.append('nombreCompleto', formData.nombreCompleto);
       formDataToSend.append('documento', formData.documento);
@@ -113,29 +102,16 @@ const PerfilUsuario = () => {
         formDataToSend.append('fotoPerfil', profileImage);
       }
 
-      const response = await fetch(`https://api-park-mongo.onrender.com/api/users/${userId}`, {
+      const updatedUser = await api.request(`/users/${userId}`, {
         method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`
-          // NO establecer Content-Type, fetch lo hará automáticamente para FormData
-        },
         body: formDataToSend
       });
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || 'Error al actualizar perfil');
-      }
-
-      const updatedUser = await response.json();
-
-      // Actualizar imagen de preview si se subió una nueva
       if (updatedUser.FotoPerfil) {
-        const baseUrl = 'https://api-park-mongo.onrender.com';
+        const baseUrl = 'http://localhost:4000';
         setImagePreview(`${baseUrl}${updatedUser.FotoPerfil}?t=${Date.now()}`);
       }
 
-      // Actualizar datos del usuario
       setUserData(updatedUser);
 
 
@@ -162,7 +138,7 @@ const PerfilUsuario = () => {
     });
     setProfileImage(null);
     if (userData?.FotoPerfil) {
-      const baseUrl = 'https://api-park-mongo.onrender.com';
+      const baseUrl = 'http://localhost:4000';
       setImagePreview(`${baseUrl}${userData.FotoPerfil}`);
     }
   };

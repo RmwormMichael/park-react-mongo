@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
-import { getToken } from '../services/auth';
-import jwt_decode from "jwt-decode";
+import { useAuth } from '../context/AuthContext';
 import { motion } from 'framer-motion';
 import { 
   Users, 
@@ -16,6 +16,8 @@ import {
 } from 'lucide-react';
 
 export default function Dashboard() {
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const [summary, setSummary] = useState({ 
     usuarios: 0, 
     vehiculos: 0, 
@@ -24,21 +26,7 @@ export default function Dashboard() {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [user, setUser] = useState(null);
   const [recentVehicles, setRecentVehicles] = useState([]);
-
-  // Obtener datos del token
-  useEffect(() => {
-    const token = getToken();
-    if (token) {
-      try {
-        const decoded = jwt_decode(token);
-        setUser(decoded);
-      } catch (e) {
-        console.error("Token inválido:", e);
-      }
-    }
-  }, []);
 
   useEffect(() => {
   if (!user) return;
@@ -391,7 +379,7 @@ export default function Dashboard() {
                   <motion.button
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    onClick={() => window.location.href = '/users'}
+                    onClick={() => navigate('/users')}
                     className="p-6 bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-100 rounded-2xl text-left hover:shadow-md transition-all"
                   >
                     <Users className="w-8 h-8 text-blue-500 mb-4" />
@@ -403,7 +391,7 @@ export default function Dashboard() {
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  onClick={() => window.location.href = '/movimientos'}
+                  onClick={() => navigate('/movimientos')}
                   className="p-6 bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-100 rounded-2xl text-left hover:shadow-md transition-all"
                 >
                   <Car className="w-8 h-8 text-emerald-500 mb-4" />
@@ -414,7 +402,7 @@ export default function Dashboard() {
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  onClick={() => window.location.href = '/vehicles'}
+                  onClick={() => navigate('/vehicles')}
                   className="p-6 bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-100 rounded-2xl text-left hover:shadow-md transition-all"
                 >
                   <Car className="w-8 h-8 text-amber-500 mb-4" />

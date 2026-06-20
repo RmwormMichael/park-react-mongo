@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import api from "../services/api";
-import { getToken } from "../services/auth";
-import jwt_decode from "jwt-decode";
+import { useAuth } from "../context/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Car,
@@ -19,22 +18,12 @@ import {
 } from "lucide-react";
 
 export default function MovimientosPage() {
+  const { user } = useAuth();
   const [placa, setPlaca] = useState("");
   const [movimientos, setMovimientos] = useState([]);
   const [loading, setLoading] = useState(false);
   const [registering, setRegistering] = useState(false);
   const [filter, setFilter] = useState("todos"); // 'todos', 'dentro', 'fuera'
-
-  // Obtener rol del token
-  const token = getToken();
-  let user = null;
-  if (token) {
-    try {
-      user = jwt_decode(token);
-    } catch (err) {
-      console.error("Token inválido", err);
-    }
-  }
 
   const canEdit =
     user?.idRolName === "Administrador" || user?.idRolName === "Vigilante";

@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useLayoutEffect } from "react";
 import api from "../services/api";
-import { saveToken } from "../services/auth";
+import { useAuth } from "../context/AuthContext";
 import { motion } from "framer-motion";
 import { LogIn, ShieldCheck } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -11,6 +11,14 @@ export default function Login({ onSuccess, onSwitchRegister }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const { login } = useAuth();
+
+  useLayoutEffect(() => {
+    if (sessionStorage.getItem('post_logout') === 'true') {
+      sessionStorage.removeItem('post_logout');
+      navigate('/', { replace: true });
+    }
+  }, [navigate]);
 
   const fadeUp = {
     hidden: { opacity: 0, y: 25 },
@@ -30,14 +38,10 @@ export default function Login({ onSuccess, onSwitchRegister }) {
 
       if (!res || !res.token) throw new Error("Credenciales inválidas");
 
-      saveToken(res.token);
+      login(res.token);
 
-      window.dispatchEvent(new Event('authChange'));
-
-      // 🔥 Cierra el modal
       if (onSuccess) onSuccess();
 
-      // 🔥 Y recarga para que App detecte el token
       navigate('/dashboard');
 
     } catch (err) {

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import api from '../services/api'
-import { getToken } from '../services/auth' // Importar getToken
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
   Car,
@@ -107,27 +106,11 @@ export default function VehiclesPage({ user }) {
         formDataToSend.append('fotoVehiculo', vehicleImage)
       }
 
-      // Obtener token
-      const token = getToken()
-      
-      // Usar fetch directamente para enviar FormData
-      const response = await fetch('https://api-park-mongo.onrender.com/api/vehicles', {
+      const data = await api.request('/vehicles', {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`
-          // NO establecer Content-Type, fetch lo hará automáticamente para FormData
-        },
         body: formDataToSend
       })
 
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.message || 'Error al registrar vehículo')
-      }
-
-      const data = await response.json()
-
-      // Limpiar formulario
       setForm({ 
         placa: '', 
         tipo: 'carro', 
@@ -137,10 +120,8 @@ export default function VehiclesPage({ user }) {
       setVehicleImage(null)
       setImagePreview('')
       
-      // Recargar lista
       load()
       
-      // Mostrar mensaje de éxito
       alert('✅ Vehículo registrado correctamente')
     } catch(err) {
       console.error('Error al registrar vehículo:', err)
@@ -177,7 +158,7 @@ export default function VehiclesPage({ user }) {
   // Función para obtener la URL de la imagen del vehículo
   const getVehicleImageUrl = (FotoVehiculo) => {
     if (!FotoVehiculo) return null
-    const baseUrl = 'https://api-park-mongo.onrender.com'
+    const baseUrl = 'http://localhost:4000'
     return `${baseUrl}${FotoVehiculo}`
   }
 
