@@ -57,6 +57,8 @@ export default function ReportesPage() {
     moto: 0,
     bicicleta: 0
   })
+  const [vista, setVista] = useState('resumido')
+  const [detalleData, setDetalleData] = useState([])
 
   // Función para generar reporte
 async function generate() {
@@ -92,7 +94,21 @@ async function generate() {
   } finally {
     setLoading(false)
   }
-}
+  }
+
+  async function generateDetailed() {
+    setLoading(true)
+    try {
+      const url = `/reportes/detalle?fechaInicio=${start}&fechaFin=${end}&tipoVehiculo=${tipo}`
+      const res = await api.request(url, { method: 'GET' })
+      setDetalleData(res)
+    } catch(err) {
+      console.error('Error al generar reporte detallado:', err)
+      alert(err.message)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   // Generar automáticamente al cargar
   useEffect(() => {
@@ -117,6 +133,132 @@ async function generate() {
     link.href = URL.createObjectURL(blob)
     link.download = `reporte_${start}_${end}.csv`
     link.click()
+  }
+
+  const tipoLabel = tipo === 'todos' ? 'Todos los tipos' : tipo.charAt(0).toUpperCase() + tipo.slice(1)
+
+  async function exportToExcelDetallado() {
+    if (detalleData.length === 0) {
+      alert('No hay datos para exportar')
+      return
+    }
+
+    let ExcelJS
+    try {
+      ExcelJS = (await import('exceljs')).default
+    } catch {
+      alert('Error al cargar la librería de exportación. Verifica tu conexión e intenta de nuevo.')
+      return
+    }
+
+    const workbook = new ExcelJS.Workbook()
+    workbook.creator = 'SENA Park Control'
+    workbook.created = new Date()
+    const ws = workbook.addWorksheet('Reporte Detallado')
+
+    // Column widths
+    ws.getColumn(1).width = 22
+    ws.getColumn(2).width = 22
+    ws.getColumn(3).width = 14
+    ws.getColumn(4).width = 18
+    ws.getColumn(5).width = 28
+    ws.getColumn(6).width = 12
+
+    const green = 'FF1A6B3C'
+    const darkGray = 'FF333333'
+    const mediumGray = 'FF555555'
+
+    // Row 1 — Main title
+    ws.mergeCells('A1:F1')
+    const t1 = ws.getCell('A1')
+    t1.value = 'SENA PARK CONTROL'
+    t1.font = { name: 'Calibri', size: 18, bold: true, color: { argb: green } }
+    t1.alignment = { horizontal: 'center', vertical: 'middle' }
+    ws.getRow(1).height = 32
+
+    // Row 2 — Subtitle
+    ws.mergeCells('A2:F2')
+    const t2 = ws.getCell('A2')
+    t2.value = 'REPORTE DETALLADO DE MOVIMIENTOS'
+    t2.font = { name: 'Calibri', size: 14, bold: true, color: { argb: darkGray } }
+    t2.alignment = { horizontal: 'center', vertical: 'middle' }
+    ws.getRow(2).height = 26
+
+    // Row 4–7 — Info section
+    const now = new Date()
+    const fechaGen = now.toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+    ws.getCell('A4').value = `Fecha de generación: ${fechaGen}`
+    ws.getCell('A5').value = `Período consultado: ${formatDisplayDate(start)} — ${formatDisplayDate(end)}`
+    ws.getCell('A6').value = `Tipo de vehículo filtrado: ${tipoLabel}`
+    ws.getCell('A7').value = `Total de movimientos encontrados: ${detalleData.length}`
+
+    for (let r = 4; r <= 7; r++) {
+      const row = ws.getRow(r)
+      row.font = { name: 'Calibri', size: 11, color: { argb: mediumGray } }
+      row.getCell(1).alignment = { vertical: 'middle' }
+      row.height = 20
+    }
+
+    // Row 9 — Column headers
+    const hr = 9
+    const headers = ['Fecha Entrada', 'Fecha Salida', 'Placa', 'Tipo de Vehículo', 'Propietario', 'Estado']
+    headers.forEach((h, i) => {
+      const cell = ws.getRow(hr).getCell(i + 1)
+      cell.value = h
+      cell.font = { name: 'Calibri', size: 11, bold: true, color: { argb: 'FFFFFFFF' } }
+      cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: green } }
+      cell.alignment = { horizontal: 'center', vertical: 'middle' }
+      cell.border = {
+        top: { style: 'thin' }, left: { style: 'thin' },
+        bottom: { style: 'thin' }, right: { style: 'thin' }
+      }
+    })
+    ws.getRow(hr).height = 22
+
+    // Auto-filter on header row
+    ws.autoFilter = { from: { row: hr, col: 1 }, to: { row: hr, col: 6 } }
+
+    // Data rows starting at row 10
+    detalleData.forEach((reg, i) => {
+      const dr = ws.getRow(hr + 1 + i)
+
+      dr.getCell(1).value = new Date(reg.fechaEntrada)
+      dr.getCell(1).numFmt = 'dd/mm/yyyy hh:mm'
+
+      if (reg.fechaSalida) {
+        dr.getCell(2).value = new Date(reg.fechaSalida)
+        dr.getCell(2).numFmt = 'dd/mm/yyyy hh:mm'
+      } else {
+        dr.getCell(2).value = '—'
+        dr.getCell(2).alignment = { horizontal: 'center', vertical: 'middle' }
+      }
+
+      dr.getCell(3).value = reg.placa
+      dr.getCell(4).value = reg.tipoVehiculo === 'carro' ? 'Carro' : reg.tipoVehiculo === 'moto' ? 'Moto' : 'Bicicleta'
+      dr.getCell(5).value = reg.propietario
+      dr.getCell(6).value = reg.estado === 'dentro' ? 'Dentro' : 'Fuera'
+      dr.getCell(6).alignment = { horizontal: 'center', vertical: 'middle' }
+
+      for (let j = 1; j <= 6; j++) {
+        const c = dr.getCell(j)
+        c.font = { name: 'Calibri', size: 11, color: { argb: darkGray } }
+        if (j !== 2 || reg.fechaSalida) c.alignment = c.alignment || { vertical: 'middle' }
+        c.border = {
+          top: { style: 'thin' }, left: { style: 'thin' },
+          bottom: { style: 'thin' }, right: { style: 'thin' }
+        }
+      }
+      dr.height = 20
+    })
+
+    // Generate and download
+    const buffer = await workbook.xlsx.writeBuffer()
+    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
+    const link = document.createElement('a')
+    link.href = URL.createObjectURL(blob)
+    link.download = `Reporte_Detallado_${start}.xlsx`
+    link.click()
+    URL.revokeObjectURL(link.href)
   }
 
   return (
@@ -146,6 +288,32 @@ async function generate() {
             </div>
           </div>
         </motion.div>
+
+        {/* Tabs de vista */}
+        <div className="flex space-x-1 mb-6 bg-gray-100 rounded-xl p-1 w-fit">
+          <button
+            onClick={() => { setVista('resumido'); generate(); }}
+            className={`px-5 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
+              vista === 'resumido'
+                ? 'bg-white text-emerald-600 shadow-sm'
+                : 'text-gray-600 hover:text-gray-900'
+            }`}
+          >
+            <BarChart3 className="w-4 h-4 inline mr-2" />
+            Reporte Resumido
+          </button>
+          <button
+            onClick={() => { setVista('detallado'); generateDetailed(); }}
+            className={`px-5 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
+              vista === 'detallado'
+                ? 'bg-white text-emerald-600 shadow-sm'
+                : 'text-gray-600 hover:text-gray-900'
+            }`}
+          >
+            <Car className="w-4 h-4 inline mr-2" />
+            Reporte Detallado
+          </button>
+        </div>
 
         {/* Panel de filtros */}
         <motion.div
@@ -220,7 +388,7 @@ async function generate() {
 
             <div className="flex items-end">
               <button
-                onClick={generate}
+                onClick={() => { vista === 'detallado' ? generateDetailed() : generate() }}
                 disabled={loading}
                 className="w-full py-3.5 bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-medium rounded-xl hover:shadow-lg hover:shadow-emerald-200 disabled:opacity-50 transition-all duration-300 flex items-center justify-center"
               >
@@ -232,7 +400,7 @@ async function generate() {
                 ) : (
                   <>
                     <BarChart3 className="w-5 h-5 mr-2" />
-                    Generar Reporte
+                    {vista === 'detallado' ? 'Generar Reporte Detallado' : 'Generar Reporte'}
                   </>
                 )}
               </button>
@@ -255,7 +423,7 @@ async function generate() {
         </motion.div>
 
         {/* Panel de estadísticas */}
-        {data.length > 0 && (
+        {vista === 'resumido' && data.length > 0 && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -309,6 +477,7 @@ async function generate() {
         )}
 
         {/* Tabla de resultados */}
+        {vista === 'resumido' && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -488,6 +657,175 @@ async function generate() {
             </div>
           )}
         </motion.div>
+        )}
+
+        {/* Tabla detallada */}
+        {vista === 'detallado' && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden"
+        >
+          <div className="px-6 py-4 border-b border-gray-100">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div>
+                <h2 className="text-xl font-bold text-gray-900 flex items-center">
+                  <Car className="w-5 h-5 mr-2" />
+                  Reporte Detallado
+                </h2>
+                <p className="text-gray-600">
+                  {detalleData.length} {detalleData.length === 1 ? 'movimiento encontrado' : 'movimientos encontrados'}
+                </p>
+              </div>
+              <button
+                onClick={exportToExcelDetallado}
+                disabled={detalleData.length === 0}
+                className="px-4 py-2.5 bg-emerald-50 text-emerald-600 rounded-lg text-sm font-medium hover:bg-emerald-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+              >
+                <Download className="w-4 h-4" />
+                <span>Exportar Excel</span>
+              </button>
+            </div>
+          </div>
+
+          <div className="overflow-x-auto">
+            {loading ? (
+              <div className="py-12 text-center">
+                <Loader2 className="w-8 h-8 text-emerald-500 animate-spin mx-auto" />
+                <p className="mt-2 text-gray-600">Generando reporte detallado...</p>
+              </div>
+            ) : detalleData.length === 0 ? (
+              <div className="py-12 text-center">
+                <AlertCircle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                <p className="text-gray-600">No hay datos para mostrar</p>
+                <p className="text-sm text-gray-500 mt-1">
+                  Ajusta los filtros y genera un nuevo reporte
+                </p>
+              </div>
+            ) : (
+              <table className="w-full">
+                <thead>
+                  <tr className="bg-gray-50">
+                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha Entrada</th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha Salida</th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Placa</th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Propietario</th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {detalleData.map((row, i) => (
+                    <motion.tr
+                      key={i}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: i * 0.03 }}
+                      className="hover:bg-gray-50/50 transition-colors"
+                    >
+                      <td className="px-6 py-4">
+                        <div className="flex items-center space-x-2">
+                          <Clock className="w-4 h-4 text-gray-400" />
+                          <div>
+                            <div className="font-medium text-gray-900">
+                              {new Date(row.fechaEntrada).toLocaleDateString('es-ES', {
+                                year: 'numeric', month: 'long', day: 'numeric'
+                              })}
+                            </div>
+                            <div className="text-sm text-gray-500">
+                              {new Date(row.fechaEntrada).toLocaleTimeString('es-ES', {
+                                hour: '2-digit', minute: '2-digit'
+                              })}
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        {row.fechaSalida ? (
+                          <div className="flex items-center space-x-2">
+                            <Clock className="w-4 h-4 text-gray-400" />
+                            <div>
+                              <div className="font-medium text-gray-900">
+                                {new Date(row.fechaSalida).toLocaleDateString('es-ES', {
+                                  year: 'numeric', month: 'long', day: 'numeric'
+                                })}
+                              </div>
+                              <div className="text-sm text-gray-500">
+                                {new Date(row.fechaSalida).toLocaleTimeString('es-ES', {
+                                  hour: '2-digit', minute: '2-digit'
+                                })}
+                              </div>
+                            </div>
+                          </div>
+                        ) : (
+                          <span className="text-gray-400">—</span>
+                        )}
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center space-x-3">
+                          <div className={`p-2 rounded-lg ${
+                            row.tipoVehiculo === 'carro' ? 'bg-emerald-100 text-emerald-600' :
+                            row.tipoVehiculo === 'moto' ? 'bg-amber-100 text-amber-600' :
+                            'bg-violet-100 text-violet-600'
+                          }`}>
+                            {row.tipoVehiculo === 'carro' ? <Car className="w-4 h-4" /> :
+                             row.tipoVehiculo === 'moto' ? <Bike className="w-4 h-4" /> :
+                             <Truck className="w-4 h-4" />}
+                          </div>
+                          <div className="font-mono font-bold text-gray-900">
+                            {row.placa}
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="font-medium text-gray-900 capitalize">
+                          {row.tipoVehiculo === 'carro' ? 'Carro' :
+                           row.tipoVehiculo === 'moto' ? 'Moto' :
+                           'Bicicleta'}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="font-medium text-gray-900">
+                          {row.propietario}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium ${
+                          row.estado === 'dentro'
+                            ? 'bg-emerald-100 text-emerald-700'
+                            : 'bg-gray-100 text-gray-700'
+                        }`}>
+                          {row.estado === 'dentro' ? 'Dentro' : 'Fuera'}
+                        </div>
+                      </td>
+                    </motion.tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+
+          {detalleData.length > 0 && (
+            <div className="px-6 py-4 border-t border-gray-100 bg-gray-50">
+              <div className="text-sm text-gray-600">
+                Reporte generado el{' '}
+                <span className="font-semibold text-gray-900">
+                  {new Date().toLocaleDateString('es-ES', {
+                    year: 'numeric', month: 'long', day: 'numeric'
+                  })}
+                </span>
+                {' '}a las{' '}
+                <span className="font-semibold text-gray-900">
+                  {new Date().toLocaleTimeString('es-ES', {
+                    hour: '2-digit', minute: '2-digit'
+                  })}
+                </span>
+              </div>
+            </div>
+          )}
+        </motion.div>
+        )}
 
         {/* Información adicional */}
         <motion.div
