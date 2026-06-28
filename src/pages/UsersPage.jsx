@@ -27,7 +27,9 @@ import {
   ChevronRight,
   Maximize2
 } from 'lucide-react'
-import Modal from '../components/Modal' // Asegúrate de tener esta importación
+import Modal from '../components/Modal'
+import LoadingSpinner from '../components/LoadingSpinner'
+import EmptyState from '../components/EmptyState'
 
 export default function UsersPage() {
   const [users, setUsers] = useState([])
@@ -320,20 +322,14 @@ async function load() {
 
           {/* Loading state */}
           {loading ? (
-            <div className="py-12 text-center">
-              <Loader2 className="w-8 h-8 text-emerald-500 animate-spin mx-auto" />
-              <p className="mt-2 text-gray-600">Cargando usuarios...</p>
-            </div>
+            <LoadingSpinner message="Cargando usuarios..." />
           ) : filteredUsers.length === 0 ? (
-            <div className="py-12 text-center">
-              <AlertCircle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-600">No se encontraron usuarios</p>
-              <p className="text-sm text-gray-500 mt-1">
-                {searchTerm || roleFilter !== 'todos' 
-                  ? 'Intenta con otros términos de búsqueda' 
-                  : 'No hay usuarios registrados en el sistema'}
-              </p>
-            </div>
+            <EmptyState
+              message="No se encontraron usuarios"
+              suggestion={searchTerm || roleFilter !== 'todos'
+                ? 'Intenta con otros términos de búsqueda'
+                : 'No hay usuarios registrados en el sistema'}
+            />
           ) : (
             <>
               {/* Tabla */}

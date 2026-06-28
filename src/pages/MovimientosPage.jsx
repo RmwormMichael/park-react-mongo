@@ -9,13 +9,14 @@ import {
   LogOut,
   Eye,
   Shield,
-  AlertCircle,
   Loader2,
   Calendar,
   CheckCircle,
   XCircle,
   Filter,
 } from "lucide-react";
+import LoadingSpinner from '../components/LoadingSpinner';
+import EmptyState from '../components/EmptyState';
 
 export default function MovimientosPage() {
   const { user } = useAuth();
@@ -408,24 +409,19 @@ export default function MovimientosPage() {
                 {loading ? (
                   <tr>
                     <td colSpan="5" className="px-6 py-12 text-center">
-                      <Loader2 className="w-8 h-8 text-emerald-500 animate-spin mx-auto" />
-                      <p className="mt-2 text-gray-600">
-                        Cargando movimientos...
-                      </p>
+                      <LoadingSpinner message="Cargando movimientos..." padding={false} />
                     </td>
                   </tr>
                 ) : filteredMovimientos.length === 0 ? (
                   <tr>
                     <td colSpan="5" className="px-6 py-12 text-center">
-                      <AlertCircle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                      <p className="text-gray-600">
-                        No hay movimientos para mostrar
-                      </p>
-                      <p className="text-sm text-gray-500 mt-1">
-                        {filter !== "todos"
+                      <EmptyState
+                        message="No hay movimientos para mostrar"
+                        suggestion={filter !== "todos"
                           ? `No hay movimientos con estado "${filter}"`
                           : "Comience registrando un movimiento"}
-                      </p>
+                        padding={false}
+                      />
                     </td>
                   </tr>
                 ) : (

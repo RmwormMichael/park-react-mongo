@@ -12,9 +12,11 @@ import {
   PieChart,
   TrendingUp,
   Clock,
-  AlertCircle,
   Loader2
 } from 'lucide-react'
+
+import LoadingSpinner from '../components/LoadingSpinner'
+import EmptyState from '../components/EmptyState'
 
 // Función para obtener fecha actual en Colombia (UTC-5)
 const getColombiaDate = () => {
@@ -508,18 +510,12 @@ async function generate() {
           {/* Tabla */}
           <div className="overflow-x-auto">
             {loading ? (
-              <div className="py-12 text-center">
-                <Loader2 className="w-8 h-8 text-emerald-500 animate-spin mx-auto" />
-                <p className="mt-2 text-gray-600">Generando reporte...</p>
-              </div>
+              <LoadingSpinner message="Generando reporte..." />
             ) : data.length === 0 ? (
-              <div className="py-12 text-center">
-                <AlertCircle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-600">No hay datos para mostrar</p>
-                <p className="text-sm text-gray-500 mt-1">
-                  Ajusta los filtros y genera un nuevo reporte
-                </p>
-              </div>
+              <EmptyState
+                message="No hay datos para mostrar"
+                suggestion="Ajusta los filtros y genera un nuevo reporte"
+              />
             ) : (
               <table className="w-full">
                 <thead>
@@ -691,18 +687,12 @@ async function generate() {
 
           <div className="overflow-x-auto">
             {loading ? (
-              <div className="py-12 text-center">
-                <Loader2 className="w-8 h-8 text-emerald-500 animate-spin mx-auto" />
-                <p className="mt-2 text-gray-600">Generando reporte detallado...</p>
-              </div>
+              <LoadingSpinner message="Generando reporte detallado..." />
             ) : detalleData.length === 0 ? (
-              <div className="py-12 text-center">
-                <AlertCircle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-600">No hay datos para mostrar</p>
-                <p className="text-sm text-gray-500 mt-1">
-                  Ajusta los filtros y genera un nuevo reporte
-                </p>
-              </div>
+              <EmptyState
+                message="No hay datos para mostrar"
+                suggestion="Ajusta los filtros y genera un nuevo reporte"
+              />
             ) : (
               <table className="w-full">
                 <thead>

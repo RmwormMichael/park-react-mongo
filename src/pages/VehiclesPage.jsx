@@ -18,10 +18,11 @@ import {
   Shield,
   RefreshCw,
   Camera,
-  Eye,
   Image as ImageIcon,
-  X
+  X,
 } from 'lucide-react'
+import LoadingSpinner from '../components/LoadingSpinner'
+import EmptyState from '../components/EmptyState'
 
 export default function VehiclesPage({ user }) {
   const [vehicles, setVehicles] = useState([])
@@ -509,22 +510,16 @@ export default function VehiclesPage({ user }) {
 
           {/* Loading state */}
           {loading ? (
-            <div className="py-12 text-center">
-              <Loader2 className="w-8 h-8 text-emerald-500 animate-spin mx-auto" />
-              <p className="mt-2 text-gray-600">Cargando vehículos...</p>
-            </div>
+            <LoadingSpinner message="Cargando vehículos..." />
           ) : filteredVehicles.length === 0 ? (
-            <div className="py-12 text-center">
-              <AlertCircle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-600">No se encontraron vehículos</p>
-              <p className="text-sm text-gray-500 mt-1">
-                {searchTerm || typeFilter !== 'todos' 
-                  ? 'Intenta con otros términos de búsqueda' 
-                  : canRegisterVehicle 
-                    ? 'Registra tu primer vehículo usando el formulario' 
-                    : 'No hay vehículos registrados'}
-              </p>
-            </div>
+            <EmptyState
+              message="No se encontraron vehículos"
+              suggestion={searchTerm || typeFilter !== 'todos'
+                ? 'Intenta con otros términos de búsqueda'
+                : canRegisterVehicle
+                  ? 'Registra tu primer vehículo usando el formulario'
+                  : 'No hay vehículos registrados'}
+            />
           ) : (
             <>
               {/* Tabla */}
