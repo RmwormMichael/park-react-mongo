@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { User, Mail, Phone, FileText, Camera, Save, X } from 'lucide-react';
@@ -19,6 +19,7 @@ const PerfilUsuario = () => {
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
   const [formData, setFormData] = useState({});
+  const fileInputRef = useRef(null);
   const [profileImage, setProfileImage] = useState(null);
   const [imagePreview, setImagePreview] = useState('');
   const [uploading, setUploading] = useState(false);
@@ -177,21 +178,23 @@ const PerfilUsuario = () => {
                       )}
                     </div>
                     {editing && (
-                      <label className="absolute bottom-0 right-0 cursor-pointer">
+                      <div className="absolute bottom-0 right-0">
                         <IconButton
                           variant="primary"
                           size="sm"
                           icon={Camera}
                           className="shadow-token-lg"
                           aria-label="Cambiar foto de perfil"
+                          onClick={() => fileInputRef.current?.click()}
                         />
                         <input
+                          ref={fileInputRef}
                           type="file"
                           accept="image/*"
                           onChange={handleImageChange}
                           className="hidden"
                         />
-                      </label>
+                      </div>
                     )}
                   </div>
                   <div>
