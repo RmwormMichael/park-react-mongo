@@ -9,7 +9,6 @@ import {
   UserPlus,
   Users,
   CheckCircle,
-  ArrowRight,
   Sparkles,
   TrendingUp,
   Clock,
@@ -40,7 +39,6 @@ export default function Home() {
     return () => window.removeEventListener("mousemove", handleMouseMove);
   }, []);
 
-  // Efecto de gradiente que sigue el mouse
   const gradientStyle = {
     background: `radial-gradient(600px at ${mousePosition.x}px ${mousePosition.y}px, rgba(30, 126, 52, 0.1), transparent 80%)`,
   };
@@ -51,27 +49,23 @@ export default function Home() {
       title: "Gestión por Roles",
       description:
         "Administración diferenciada con permisos específicos por tipo de usuario.",
-      color: "from-emerald-500 to-teal-500",
     },
     {
       icon: <Car className="w-6 h-6" />,
       title: "Control Vehicular",
       description:
         "Registro y seguimiento completo de vehículos con validación en tiempo real.",
-      color: "from-blue-500 to-cyan-500",
     },
     {
       icon: <BarChart3 className="w-6 h-6" />,
       title: "Reportes Inteligentes",
       description:
         "Análisis estadístico avanzado para optimización de espacios.",
-      color: "from-violet-500 to-purple-500",
     },
     {
       icon: <Lock className="w-6 h-6" />,
       title: "Seguridad Integral",
       description: "Autenticación segura y registro completo de auditoría.",
-      color: "from-amber-500 to-orange-500",
     },
   ];
 
@@ -110,13 +104,11 @@ export default function Home() {
   ];
 
   return (
-    <div className="min-h-screen bg-white relative overflow-hidden">
-      {/* Gradiente dinámico que sigue el mouse */}
+    <div className="min-h-screen bg-surface-primary relative overflow-hidden">
       <div
         className="fixed inset-0 pointer-events-none z-0 transition-opacity duration-300"
         style={gradientStyle}
       />
-      {/* Patrón de fondo sutil */}
       <div className="fixed inset-0 z-0 opacity-5">
         <div
           className="absolute inset-0"
@@ -126,24 +118,23 @@ export default function Home() {
           }}
         />
       </div>
-      {/* Navegación minimalista */}
       <nav className="relative z-50">
         <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-6">
           <div className="flex justify-between items-center">
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              className="flex items-center space-x-2 sm:space-x-3 group cursor-pointer flex-shrink-0"
+              className="flex items-center space-x-2 sm:space-x-3 cursor-pointer flex-shrink-0"
               onClick={() => navigate("/")}
             >
-              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center shadow-lg group-hover:shadow-emerald-200 transition-all duration-300">
-                <Car className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-brand-primary flex items-center justify-center shadow-token-md">
+                <Car className="w-4 h-4 sm:w-5 sm:h-5 text-fg-inverse" />
               </div>
               <div className="hidden xs:block">
-                <h1 className="text-base sm:text-lg md:text-xl font-semibold text-gray-900 tracking-tight whitespace-nowrap">
+                <h1 className="text-base sm:text-lg md:text-xl font-semibold text-fg-primary tracking-tight whitespace-nowrap">
                   SENA ParkControl
                 </h1>
-                <p className="text-xs text-gray-500 hidden sm:block">
+                <p className="text-xs text-fg-tertiary hidden sm:block">
                   Sistema de Gestión
                 </p>
               </div>
@@ -154,28 +145,25 @@ export default function Home() {
               animate={{ opacity: 1, x: 0 }}
               className="flex items-center space-x-1 sm:space-x-2 md:space-x-3"
             >
-              {/* Botón Login - Versión móvil con solo ícono */}
               <button
                 onClick={handleLogin}
-                className="sm:hidden p-2 text-gray-700 hover:text-emerald-600 hover:bg-gray-50 rounded-lg transition-colors duration-200"
+                className="sm:hidden p-2 text-fg-secondary hover:text-brand-hover hover:bg-surface-tertiary rounded-lg transition-colors duration-200"
                 title="Iniciar Sesión"
               >
                 <LogIn className="w-5 h-5" />
               </button>
 
-              {/* Botón Login - Versión desktop */}
               <button
                 onClick={handleLogin}
-                className="hidden sm:flex items-center px-3 py-2 sm:px-4 sm:py-2.5 text-sm font-medium text-gray-700 hover:text-emerald-600 transition-colors duration-200 rounded-lg hover:bg-gray-50 whitespace-nowrap"
+                className="hidden sm:flex items-center px-3 py-2 sm:px-4 sm:py-2.5 text-sm font-medium text-fg-secondary hover:text-brand-hover transition-colors duration-200 rounded-lg hover:bg-surface-tertiary whitespace-nowrap"
               >
                 <LogIn className="w-4 h-4 mr-1 sm:mr-2" />
                 <span className="hidden sm:inline">Iniciar Sesión</span>
               </button>
 
-              {/* Botón Register - Versión móvil compacta */}
               <button
                 onClick={handleRegister}
-                className="px-3 py-2 sm:px-4 sm:py-2.5 text-sm font-medium text-white bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-lg hover:shadow-lg hover:shadow-emerald-200 transition-all duration-200 whitespace-nowrap flex items-center"
+                className="px-3 py-2 sm:px-4 sm:py-2.5 text-sm font-medium text-fg-inverse bg-brand-primary rounded-lg transition-all duration-200 whitespace-nowrap flex items-center"
               >
                 <UserPlus className="w-4 h-4 mr-1 sm:mr-2" />
                 <span className="text-xs sm:text-sm">Registrarse</span>
@@ -184,7 +172,6 @@ export default function Home() {
           </div>
         </div>
       </nav>
-      {/* Hero Section */}
       <section className="relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -193,19 +180,19 @@ export default function Home() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
             >
-              <div className="inline-flex items-center px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-sm font-medium mb-8 border border-emerald-100">
+              <div className="inline-flex items-center px-3 py-1 rounded-full bg-success-light text-success text-sm font-medium mb-8 border border-success">
                 <Sparkles className="w-4 h-4 mr-2" />
                 Sistema Certificado SENA
               </div>
 
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight tracking-tight">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-fg-primary mb-6 leading-tight tracking-tight">
                 Control inteligente
-                <span className="block text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-500">
+                <span className="block text-brand-primary">
                   de parqueaderos
                 </span>
               </h1>
 
-              <p className="text-lg text-gray-600 mb-10 leading-relaxed max-w-2xl">
+              <p className="text-lg text-fg-secondary mb-10 leading-relaxed max-w-2xl">
                 Sistema integral para la gestión eficiente de accesos
                 vehiculares en centros de formación del SENA. Diseñado para
                 optimizar espacios y automatizar procesos.
@@ -219,9 +206,9 @@ export default function Home() {
               className="relative"
             >
               <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/10 to-teal-500/10 rounded-3xl blur-3xl" />
-                <div className="relative bg-gradient-to-br from-white to-gray-50 rounded-2xl border border-gray-100 p-8 shadow-xl">
-                  <div className=" rounded-xl bg-gradient-to-br from-emerald-50 to-teal-50 flex items-center justify-center">
+                <div className="absolute inset-0 bg-brand-primary/10 rounded-xl blur-3xl" />
+                <div className="relative bg-surface-primary rounded-xl border border-default p-8 shadow-token-xl">
+                  <div className="rounded-xl bg-success-light flex items-center justify-center">
                     <div className="text-center">
                       <div className="text-7xl mb-6">
                         <img
@@ -230,10 +217,10 @@ export default function Home() {
                           className="w-32 h-auto mx-auto pt-4"
                         />
                       </div>
-                      <div className="text-gray-900 font-semibold text-xl">
+                      <div className="text-fg-primary font-semibold text-xl">
                         SENA ParkControl
                       </div>
-                      <p className="text-gray-500 text-sm mt-2">
+                      <p className="text-fg-tertiary text-sm mt-2">
                         Gestión Inteligente
                       </p>
                     </div>
@@ -244,18 +231,18 @@ export default function Home() {
                       <motion.div
                         key={index}
                         whileHover={{ y: -2 }}
-                        className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm"
+                        className="bg-surface-primary p-4 rounded-xl border border-default shadow-token-sm"
                       >
                         <div className="flex items-center justify-between">
                           <div>
-                            <div className="text-2xl font-bold text-gray-900">
+                            <div className="text-2xl font-bold text-fg-primary">
                               {stat.value}
                             </div>
-                            <div className="text-sm text-gray-500">
+                            <div className="text-sm text-fg-tertiary">
                               {stat.label}
                             </div>
                           </div>
-                          <div className="text-emerald-500">{stat.icon}</div>
+                          <div className="text-brand-primary">{stat.icon}</div>
                         </div>
                       </motion.div>
                     ))}
@@ -274,14 +261,14 @@ export default function Home() {
             animate={{ opacity: 1, y: 0 }}
             className="text-center mb-16"
           >
-            <div className="inline-flex items-center px-3 py-1 rounded-full bg-gray-100 text-gray-600 text-sm font-medium mb-4">
+            <div className="inline-flex items-center px-3 py-1 rounded-full bg-surface-tertiary text-fg-tertiary text-sm font-medium mb-4">
               <TrendingUp className="w-4 h-4 mr-2" />
               Características Principales
             </div>
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-fg-primary mb-4">
               Diseñado para la excelencia
             </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            <p className="text-lg text-fg-secondary max-w-2xl mx-auto">
               Funcionalidades pensadas para optimizar la gestión vehicular en
               centros SENA
             </p>
@@ -297,16 +284,14 @@ export default function Home() {
                 whileHover={{ y: -4 }}
                 className="group"
               >
-                <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm hover:shadow-xl transition-all duration-300">
-                  <div
-                    className={`w-12 h-12 rounded-xl bg-gradient-to-br ${feature.color} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}
-                  >
-                    <div className="text-white">{feature.icon}</div>
+                <div className="bg-surface-primary rounded-2xl border border-default p-6 shadow-token-sm transition-all duration-300">
+                  <div className="w-12 h-12 rounded-xl bg-brand-primary flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <div className="text-fg-inverse">{feature.icon}</div>
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-3">
+                  <h3 className="text-lg font-semibold text-fg-primary mb-3">
                     {feature.title}
                   </h3>
-                  <p className="text-gray-600 text-sm leading-relaxed">
+                  <p className="text-fg-secondary text-sm leading-relaxed">
                     {feature.description}
                   </p>
                 </div>
@@ -316,23 +301,23 @@ export default function Home() {
         </div>
       </section>
       {/* Steps Section */}
-      <section className="relative z-10 py-6 bg-gradient-to-b from-white to-gray-50">
+      <section className="relative z-10 py-6 bg-gradient-to-b from-surface-primary to-surface-secondary">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="text-center mb-16"
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-fg-primary mb-4">
               Flujo de trabajo optimizado
             </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            <p className="text-lg text-fg-secondary max-w-2xl mx-auto">
               Proceso simplificado para máxima eficiencia
             </p>
           </motion.div>
 
           <div className="relative">
-            <div className="hidden lg:block absolute top-1/2 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent -translate-y-1/2" />
+            <div className="hidden lg:block absolute top-1/2 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border-default to-transparent -translate-y-1/2" />
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
               {steps.map((step, index) => (
@@ -343,14 +328,14 @@ export default function Home() {
                   transition={{ delay: index * 0.1 }}
                   className="relative"
                 >
-                  <div className="bg-white rounded-2xl border border-gray-100 p-8 shadow-sm hover:shadow-lg transition-all duration-300">
-                    <div className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-500 mb-4">
+                  <div className="bg-surface-primary rounded-2xl border border-default p-8 shadow-token-sm transition-all duration-300">
+                    <div className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-brand-hover mb-4">
                       {step.number}
                     </div>
-                    <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                    <h3 className="text-xl font-semibold text-fg-primary mb-3">
                       {step.title}
                     </h3>
-                    <p className="text-gray-600">{step.description}</p>
+                    <p className="text-fg-secondary">{step.description}</p>
                   </div>
                 </motion.div>
               ))}
@@ -364,14 +349,14 @@ export default function Home() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-3xl p-12 shadow-2xl"
+            className="bg-gradient-to-br from-brand-primary to-brand-hover rounded-3xl p-12 shadow-token-xl"
           >
             <div className="text-center">
-              <Building2 className="w-16 h-16 text-white mx-auto mb-8 opacity-90" />
-              <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+              <Building2 className="w-16 h-16 text-fg-inverse mx-auto mb-8 opacity-90" />
+              <h2 className="text-3xl md:text-4xl font-bold text-fg-inverse mb-6">
                 Optimiza tu parqueadero hoy
               </h2>
-              <p className="text-xl text-emerald-100 mb-10 max-w-2xl mx-auto">
+              <p className="text-xl text-fg-inverse/80 mb-10 max-w-2xl mx-auto">
                 Únete a la comunidad de centros SENA que gestionan sus
                 parqueaderos con eficiencia y seguridad.
               </p>
@@ -380,77 +365,75 @@ export default function Home() {
         </div>
       </section>
       {/* Footer */}
-      <footer className="relative z-10 border-t border-gray-100 py-12">
+      <footer className="relative z-10 border-t border-default py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="mb-8 md:mb-0">
               <div className="flex items-center space-x-3 mb-6">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center">
-                  <Car className="w-5 h-5 text-white" />
+                <div className="w-10 h-10 rounded-xl bg-brand-primary flex items-center justify-center">
+                  <Car className="w-5 h-5 text-fg-inverse" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900">
+                  <h3 className="text-lg font-semibold text-fg-primary">
                     SENA ParkControl
                   </h3>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-fg-tertiary">
                     Sistema de Gestión Vehicular
                   </p>
                 </div>
               </div>
-              <p className="text-gray-500 text-sm max-w-md">
+              <p className="text-fg-tertiary text-sm max-w-md">
                 Desarrollado para optimizar la gestión de parqueaderos en
                 centros de formación del SENA.
               </p>
             </div>
 
             <div className="text-center md:text-right">
-              <p className="text-gray-400 text-sm mb-2">
+              <p className="text-fg-tertiary text-sm mb-2">
                 © {new Date().getFullYear()} Servicio Nacional de Aprendizaje
                 SENA
               </p>
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-fg-tertiary">
                 Todos los derechos reservados
               </p>
             </div>
           </div>
 
-          <div className="mt-12 pt-8 border-t border-gray-100 text-center">
-            <p className="text-sm text-gray-400">
+          <div className="mt-12 pt-8 border-t border-default text-center">
+            <p className="text-sm text-fg-tertiary">
               Para soporte técnico, contactar al área de sistemas del centro de
               formación.
             </p>
           </div>
         </div>
       </footer>
-{modalType === "login" && (
-  <Modal onClose={() => setModalType(null)}>
+<Modal open={modalType === "login"} onClose={() => setModalType(null)}>
+  <Modal.Content>
     <Login
       onSuccess={() => {
-        setModalType(null); // Cierra el modal
-        navigate("/dashboard"); // ✅ Navega al dashboard después del login
+        setModalType(null);
+        navigate("/dashboard");
       }}
       onSwitchRegister={() => {
-        setModalType("register"); // Cambia al modal de registro
+        setModalType("register");
       }}
     />
-  </Modal>
-)}
+  </Modal.Content>
+</Modal>
 
-
-{modalType === "register" && (
-  <Modal onClose={() => setModalType(null)}>
+<Modal open={modalType === "register"} onClose={() => setModalType(null)}>
+  <Modal.Content>
     <Register
       onSuccess={() => {
-        setModalType(null); // Cierra el modal
-        // Opcional: puedes redirigir al login después de registro exitoso
+        setModalType(null);
         setModalType("login");
       }}
       onSwitchLogin={() => {
-        setModalType("login"); // Cambia al modal de login
+        setModalType("login");
       }}
     />
-  </Modal>
-)}
+  </Modal.Content>
+</Modal>
     </div>
   );
 }

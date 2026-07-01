@@ -22,6 +22,55 @@
       theme: {
         extend: {
           colors: {
+            /* Brand tokens */
+            'brand-primary': '#1E7E34',
+            'brand-hover': '#155724',
+            'brand-light': '#E6F4EA',
+            'border-brand': '#A8D5BA',
+
+            /* Background tokens */
+            'bg-primary': '#F9FAFB',
+            'bg-secondary': '#F3F4F6',
+            'bg-tertiary': '#E5E7EB',
+
+            /* Surface tokens */
+            'surface-primary': '#FFFFFF',
+            'surface-secondary': '#F9FAFB',
+            'surface-tertiary': '#F3F4F6',
+            'surface-inverse': '#1F2937',
+
+            /* Foreground tokens */
+            'fg-primary': '#111827',
+            'fg-secondary': '#4B5563',
+            'fg-tertiary': '#9CA3AF',
+            'fg-inverse': '#FFFFFF',
+
+            /* Border tokens */
+            'border-default': '#E5E7EB',
+            'border-secondary': '#F3F4F6',
+
+            /* Semantic tokens */
+            'success': '#059669',
+            'success-hover': '#047857',
+            'success-light': '#D1FAE5',
+            'success-border': '#A7F3D0',
+
+            'error': '#DC2626',
+            'error-hover': '#B91C1C',
+            'error-light': '#FEE2E2',
+            'error-border': '#FECACA',
+
+            'warning': '#D97706',
+            'warning-hover': '#B45309',
+            'warning-light': '#FEF3C7',
+            'warning-border': '#FDE68A',
+
+            'info': '#2563EB',
+            'info-hover': '#1D4ED8',
+            'info-light': '#DBEAFE',
+            'info-border': '#BFDBFE',
+
+            /* Legacy SENA colors (backward compat) */
             'sena-green': {
               DEFAULT: '#1E7E34',
               light: '#28A745',
@@ -36,33 +85,21 @@
           },
           fontFamily: {
             'sans': ['Inter', 'system-ui', 'sans-serif'],
+          },
+          boxShadow: {
+            'token-sm': '0 1px 2px 0 rgb(0 0 0 / 0.05)',
+            'token-md': '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
+            'token-lg': '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
+            'token-xl': '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
           }
         }
       }
     }
   </script>
       <style>
-      /* Estilos personalizados adicionales */
+      /* Design Tokens — respaldo para navegadores sin soporte de CSS vars */
       body {
         font-family: 'Inter', sans-serif;
-      }
-      
-      .btn-sena {
-        background: linear-gradient(135deg, #1E7E34 0%, #28A745 100%);
-        transition: all 0.3s ease;
-      }
-      
-      .btn-sena:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(30, 126, 52, 0.3);
-      }
-      
-      .sena-shadow {
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1);
-      }
-      
-      .sena-shadow-lg {
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05), 0 5px 10px rgba(0, 0, 0, 0.05);
       }
     </style>
   <title>sena-park-control-react</title>

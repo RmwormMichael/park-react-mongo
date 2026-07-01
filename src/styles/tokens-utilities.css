@@ -1,0 +1,149 @@
+/* Bridge: CSS Custom Properties → Tailwind-style utility classes
+   Supplement for Tailwind CDN JIT (generates classes only for used tokens) */
+
+/* Background */
+.bg-brand-primary { background-color: var(--color-brand-primary); }
+.hover\:bg-brand-hover:hover { background-color: var(--color-brand-hover); }
+
+.bg-error { background-color: var(--color-error); }
+.hover\:bg-error-hover:hover { background-color: var(--color-error-hover); }
+
+.bg-brand-light { background-color: var(--color-brand-light); }
+.bg-success-light { background-color: var(--color-success-light); }
+.bg-error-light { background-color: var(--color-error-light); }
+.bg-warning-light { background-color: var(--color-warning-light); }
+.bg-info-light { background-color: var(--color-info-light); }
+
+.bg-surface-primary { background-color: var(--color-surface-primary); }
+.bg-surface-tertiary { background-color: var(--color-surface-tertiary); }
+.hover\:bg-surface-tertiary:hover { background-color: var(--color-surface-tertiary); }
+
+.bg-transparent { background-color: transparent; }
+
+.bg-bg-primary { background-color: var(--color-bg-primary); }
+.bg-bg-secondary { background-color: var(--color-bg-secondary); }
+.bg-bg-tertiary { background-color: var(--color-bg-tertiary); }
+
+/* Text */
+.text-fg-primary { color: var(--color-fg-primary); }
+.text-fg-secondary { color: var(--color-fg-secondary); }
+.text-fg-tertiary { color: var(--color-fg-tertiary); }
+.text-fg-inverse { color: var(--color-fg-inverse); }
+.text-brand-primary { color: var(--color-brand-primary); }
+.text-success { color: var(--color-success); }
+.text-error { color: var(--color-error); }
+.text-warning { color: var(--color-warning); }
+.text-info { color: var(--color-info); }
+
+/* Border */
+.border-default { border-color: var(--color-border-default); }
+.border-error { border-color: var(--color-error); }
+.hover\:border-hover:hover { border-color: var(--color-border-hover); }
+
+/* Focus ring */
+.focus\:ring-brand:focus { --tw-ring-color: var(--color-brand-primary); }
+.focus\:ring-error:focus { --tw-ring-color: var(--color-error); }
+
+/* Shadow — ordered so sm overrides md, lg overrides both */
+.shadow-token-md { box-shadow: var(--shadow-md); }
+.shadow-token-lg { box-shadow: var(--shadow-lg); }
+.shadow-token-xl { box-shadow: var(--shadow-xl); }
+.shadow-token-sm { box-shadow: var(--shadow-sm); }
+
+/* =========================================
+   CDN Supplements
+   Standard Tailwind utilities not generated
+   by JIT because no existing page uses them.
+   Remove when migrating to local Tailwind.
+   ========================================= */
+
+/* Border radius */
+.rounded-md { border-radius: var(--radius-md); }
+.rounded-lg { border-radius: var(--radius-lg); }
+.rounded-xl { border-radius: var(--radius-xl); }
+
+/* Gap (spacing between flex children) */
+.gap-1 { gap: var(--spacing-1); }
+.gap-2 { gap: var(--spacing-2); }
+
+/* Transition duration */
+.duration-150 { transition-duration: 150ms; }
+
+/* Focus ring */
+.focus\:ring-2:focus { --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color); --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color); box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000); }
+.focus\:ring-offset-2:focus { --tw-ring-offset-width: 2px; }
+
+/* Disabled state */
+.disabled\:opacity-50:disabled { opacity: var(--opacity-disabled); }
+.disabled\:cursor-not-allowed:disabled { cursor: not-allowed; }
+
+/* Cursor */
+.cursor-wait { cursor: wait; }
+
+/* Spinner animation */
+@keyframes spin { to { transform: rotate(360deg); } }
+.animate-spin { animation: spin 1s linear infinite; }
+
+/* Active state */
+.active\:opacity-90:active { opacity: 0.9; }
+.active\:opacity-80:active { opacity: 0.8; }
+
+/* Hover opacity for filter pills */
+.hover\:opacity-80:hover { opacity: 0.8; }
+
+
+
+/* Placeholder color */
+.placeholder\:text-fg-tertiary::placeholder { color: var(--color-fg-tertiary); }
+
+/* Card padding */
+.pt-6 { padding-top: var(--spacing-6); }
+.pb-6 { padding-bottom: var(--spacing-6); }
+.first\:pt-6:first-child { padding-top: var(--spacing-6); }
+
+/* Badge sizing */
+.h-7 { height: var(--spacing-7); }
+.px-2 { padding-left: var(--spacing-2); padding-right: var(--spacing-2); }
+.px-2\.5 { padding-left: var(--spacing-2-5); padding-right: var(--spacing-2-5); }
+.leading-none { line-height: 1; }
+
+/* Textarea vertical resize */
+.resize-y { resize: vertical; }
+.min-h-20 { min-height: var(--spacing-20); }
+
+/* Select native appearance removal */
+.appearance-none { appearance: none; }
+
+/* Cursor */
+.cursor-default { cursor: default; }
+
+/* =========================================
+   Sprint 4 — Custom Token Supplements
+   Border colors for Alert semantic variants
+   ========================================= */
+.border-success { border-color: var(--color-success); }
+.border-warning { border-color: var(--color-warning); }
+.border-info { border-color: var(--color-info); }
+
+/* Alert close button */
+.hover\:text-fg-primary:hover { color: var(--color-fg-primary); }
+
+/* Loading fullscreen overlay (z-overlay token) */
+.z-overlay { z-index: var(--z-overlay); }
+
+/* Z-index tokens */
+.z-sticky { z-index: var(--z-sticky); }
+
+/* Hover text color for nav links */
+.hover\:text-success:hover { color: var(--color-success); }
+
+/* Semantic background colors for StatCard legend dots and badges */
+.bg-info { background-color: var(--color-info); }
+.bg-success { background-color: var(--color-success); }
+.bg-warning { background-color: var(--color-warning); }
+
+/* Brand border for info section and highlights */
+.border-brand-primary { border-color: var(--color-brand-primary); }
+
+/* Brand hover text for email links */
+.hover\:text-brand-hover:hover { color: var(--color-brand-hover); }

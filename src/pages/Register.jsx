@@ -1,10 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import api from "../services/api";
-import { motion } from "framer-motion";
-import { UserPlus, ShieldCheck } from "lucide-react";
+import { useToast } from "../components/ToastProvider";
+import { UserPlus } from "lucide-react";
+import AuthLayout from "../components/AuthLayout";
+import Input from "../components/Input";
+import Alert from "../components/Alert";
+import Button from "../components/Button";
 
 export default function Register() {
+  const { toast } = useToast();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -20,15 +25,9 @@ export default function Register() {
     idRol: 3,
   });
 
-  const fadeUp = {
-    hidden: { opacity: 0, y: 25 },
-    show: { opacity: 1, y: 0 }
-  };
-
   useEffect(() => {
     setRoles([
       { IdRol: 3, NombreRol: "Aprendiz" },
-      { IdRol: 2, NombreRol: "Instructor" },
       { IdRol: 4, NombreRol: "Visitante" },
     ]);
   }, []);
@@ -69,7 +68,7 @@ export default function Register() {
 
       await api.request("/auth/register", { method: "POST", body: data });
 
-      alert("¡Registro exitoso! Inicia sesión.");
+      toast({ title: "Registro exitoso", description: "Inicia sesión para continuar.", variant: "success" });
       navigate("/login");
     } catch (err) {
       setError(err.message || "Error en el registro");
@@ -79,149 +78,101 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-50 to-white px-4">
+    <AuthLayout
+      title="Registro - SENA ParkControl"
+      subtitle="Crea tu cuenta para acceder al sistema"
+      footer={
+        <>
+          ¿Ya tienes cuenta?{" "}
+          <Link to="/login" className="text-brand-primary hover:underline">
+            Iniciar sesión
+          </Link>
+        </>
+      }
+    >
+      <form onSubmit={submit} className="space-y-4 mt-6">
+        <Input
+          label="Nombre Completo"
+          name="nombreCompleto"
+          value={form.nombreCompleto}
+          onChange={handleChange}
+          required
+        />
 
-      <motion.div
-        variants={fadeUp}
-        initial="hidden"
-        animate="show"
-        transition={{ duration: 0.6 }}
-        className="w-full px-4 py-2 mt-2 bg-white border border-gray-300 rounded-xl 
-focus:outline-none focus:ring-2 focus:ring-[#39A900] 
-transition-all duration-200 hover:border-[#39A900]"
-      >
-        <div className="flex justify-center mb-6">
-          <ShieldCheck size={42} className="text-sena-green" />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Input
+            label="Documento"
+            name="documento"
+            value={form.documento}
+            onChange={handleChange}
+            required
+          />
+          <Input
+            label="Teléfono"
+            name="telefono"
+            value={form.telefono}
+            onChange={handleChange}
+            required
+          />
         </div>
 
-        <h2 className="text-2xl font-bold text-center text-gray-800">
-          Registro - SENA ParkControl
-        </h2>
-        <p className="text-gray-600 text-center mt-2">
-          Crea tu cuenta para acceder al sistema
-        </p>
+        <Input
+          label="Correo"
+          type="email"
+          name="correo"
+          value={form.correo}
+          onChange={handleChange}
+          required
+        />
 
-        <form onSubmit={submit} className="mt-6 space-y-4">
-
-          <div>
-            <label className="text-sm font-medium text-gray-700">Nombre Completo</label>
-            <input
-              name="nombreCompleto"
-              className="w-full px-4 py-2 mt-2 bg-white border border-gray-300 rounded-xl 
-focus:outline-none focus:ring-2 focus:ring-[#39A900] 
-transition-all duration-200 hover:border-[#39A900]"
-              onChange={handleChange}
-              value={form.nombreCompleto}
-              required
-            />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="text-sm font-medium text-gray-700">Documento</label>
-              <input
-                name="documento"
-                className="w-full px-4 py-2 mt-2 bg-white border border-gray-300 rounded-xl 
-focus:outline-none focus:ring-2 focus:ring-[#39A900] 
-transition-all duration-200 hover:border-[#39A900]"
-                onChange={handleChange}
-                value={form.documento}
-                required
-              />
-            </div>
-
-            <div>
-              <label className="text-sm font-medium text-gray-700">Teléfono</label>
-              <input
-                name="telefono"
-                className="w-full px-4 py-2 mt-2 bg-gray-100 border border-gray-300 rounded-xl 
-             focus:outline-none focus:ring-2 focus:ring-blue-500-form"
-                onChange={handleChange}
-                value={form.telefono}
-                required
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="text-sm font-medium text-gray-700">Correo</label>
-            <input
-              type="email"
-              name="correo"
-              className="w-full px-4 py-2 mt-2 bg-white border border-gray-300 rounded-xl 
-focus:outline-none focus:ring-2 focus:ring-[#39A900] 
-transition-all duration-200 hover:border-[#39A900]"
-              onChange={handleChange}
-              value={form.correo}
-              required
-            />
-          </div>
-
-          <div>
-            <label className="text-sm font-medium text-gray-700">Rol</label>
-            <select
-              name="idRol"
-              className="input-form"
-              onChange={handleChange}
-              value={form.idRol}
-            >
-              <option value="">Selecciona un rol</option>
-              {roles.map((rol) => (
-                <option key={rol.IdRol} value={rol.IdRol}>
-                  {rol.NombreRol}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className="text-sm font-medium text-gray-700">Contraseña</label>
-            <input
-              type="password"
-              name="contrasena"
-              className="w-full px-4 py-2 mt-2 bg-gray-100 border border-gray-300 rounded-xl 
-             focus:outline-none focus:ring-2 focus:ring-blue-500-form"
-              onChange={handleChange}
-              value={form.contrasena}
-              required
-            />
-          </div>
-
-          <div>
-            <label className="text-sm font-medium text-gray-700">
-              Confirmar Contraseña
-            </label>
-            <input
-              type="password"
-              name="confirmarContrasena"
-              className="input-form"
-              onChange={handleChange}
-              value={form.confirmarContrasena}
-              required
-            />
-          </div>
-
-          {error && (
-            <p className="text-red-500 text-sm bg-red-50 border px-3 py-2 rounded-lg text-center">
-              {error}
-            </p>
-          )}
-
-          <button
-            disabled={loading}
-            className="w-full bg-sena-green text-white py-3 rounded-lg font-semibold shadow hover:bg-sena-green-dark transition"
+        <div>
+          <label className="block text-sm font-medium text-fg-secondary mb-2">Rol</label>
+          <select
+            name="idRol"
+            value={form.idRol}
+            onChange={handleChange}
+            className="w-full h-11 px-4 rounded-lg border border-default bg-bg-primary text-fg-primary text-sm focus:outline-none focus:ring-2 focus:ring-brand focus:border-default transition-colors duration-200"
           >
-            {loading ? "Registrando..." : "Registrarse"}
-          </button>
+            <option value="">Selecciona un rol</option>
+            {roles.map((rol) => (
+              <option key={rol.IdRol} value={rol.IdRol}>
+                {rol.NombreRol}
+              </option>
+            ))}
+          </select>
+        </div>
 
-          <p className="text-center text-gray-600 text-sm mt-3">
-            ¿Ya tienes cuenta?{" "}
-            <Link to="/login" className="text-sena-green hover:underline">
-              Iniciar sesión
-            </Link>
-          </p>
-        </form>
-      </motion.div>
-    </div>
+        <Input
+          label="Contraseña"
+          type="password"
+          name="contrasena"
+          value={form.contrasena}
+          onChange={handleChange}
+          required
+        />
+
+        <Input
+          label="Confirmar Contraseña"
+          type="password"
+          name="confirmarContrasena"
+          value={form.confirmarContrasena}
+          onChange={handleChange}
+          required
+        />
+
+        {error && (
+          <Alert variant="error">{error}</Alert>
+        )}
+
+        <Button
+          type="submit"
+          loading={loading}
+          icon={UserPlus}
+          className="w-full"
+        >
+          Registrarse
+        </Button>
+      </form>
+    </AuthLayout>
   );
 }

@@ -4,12 +4,16 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
+import DesignSystemPage from './pages/DesignSystemPage';
 import UsersPage from './pages/UsersPage';
 import VehiclesPage from './pages/VehiclesPage';
 import MovimientosPage from './pages/MovimientosPage';
 import ReportesPage from './pages/ReportesPage';
 import Nav from './components/Nav';
 import PerfilUsuario from './pages/PerfilUsuario';
+import PrivateRoute from './components/PrivateRoute';
+import { ToastProvider } from './components/ToastProvider';
+import { ROLES } from './utils/permissions';
 import { useAuth } from './context/AuthContext';
 
 export default function App() {
@@ -18,42 +22,46 @@ export default function App() {
   if (loading) return null;
 
   return (
-    <div className="app-root">
-      {isAuth && <Nav />}
+    <ToastProvider>
+      <div className="app-root">
+        {isAuth && <Nav />}
 
-      <main className="app-main">
-        <Routes>
-          <Route path="/" element={isAuth ? <Navigate to="/dashboard" /> : <Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+        <main className="app-main">
+          <Routes>
+            <Route path="/" element={isAuth ? <Navigate to="/dashboard" /> : <Home />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
 
-          <Route path="/dashboard" element={
-            isAuth ? <Dashboard /> : <Navigate to="/login" />
-          } />
+            <Route path="/design-system" element={<DesignSystemPage />} />
 
-          <Route path="/users" element={
-            isAuth ? <UsersPage /> : <Navigate to="/login" />
-          } />
+            <Route path="/dashboard" element={
+              <PrivateRoute><Dashboard /></PrivateRoute>
+            } />
 
-          <Route path="/perfil" element={
-            isAuth ? <PerfilUsuario /> : <Navigate to="/login" />
-          } />
+            <Route path="/users" element={
+              <PrivateRoute roles={[ROLES.ADMIN]}><UsersPage /></PrivateRoute>
+            } />
 
-          <Route path="/vehicles" element={
-            isAuth ? <VehiclesPage user={decodedUser} /> : <Navigate to="/login" />
-          } />
+            <Route path="/perfil" element={
+              <PrivateRoute><PerfilUsuario /></PrivateRoute>
+            } />
 
-          <Route path="/movimientos" element={
-            isAuth ? <MovimientosPage /> : <Navigate to="/login" />
-          } />
+            <Route path="/vehicles" element={
+              <PrivateRoute><VehiclesPage user={decodedUser} /></PrivateRoute>
+            } />
 
-          <Route path="/reportes" element={
-            isAuth ? <ReportesPage /> : <Navigate to="/login" />
-          } />
+            <Route path="/movimientos" element={
+              <PrivateRoute><MovimientosPage /></PrivateRoute>
+            } />
 
-          <Route path="*" element={<Navigate to="/" />} />
-        </Routes>
-      </main>
-    </div>
+            <Route path="/reportes" element={
+              <PrivateRoute roles={[ROLES.ADMIN, ROLES.VIGILANTE]}><ReportesPage /></PrivateRoute>
+            } />
+
+            <Route path="*" element={<Navigate to="/" />} />
+          </Routes>
+        </main>
+      </div>
+    </ToastProvider>
   );
 }

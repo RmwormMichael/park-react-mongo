@@ -4,6 +4,13 @@ import { motion } from 'framer-motion';
 import { User, Mail, Phone, FileText, Camera, Save, X } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
+import Card from '../components/Card';
+import Input from '../components/Input';
+import Button from '../components/Button';
+import IconButton from '../components/IconButton';
+import Alert from '../components/Alert';
+import Loading from '../components/Loading';
+import Badge from '../components/Badge';
 
 const PerfilUsuario = () => {
   const navigate = useNavigate();
@@ -34,13 +41,12 @@ const PerfilUsuario = () => {
         correo: data.Correo,
         telefono: data.Telefono || ''
       });
-      
-      // Si ya tiene foto de perfil, cargarla
+
       if (data.FotoPerfil) {
         const baseUrl = 'http://localhost:4000';
         setImagePreview(`${baseUrl}${data.FotoPerfil}`);
       }
-      
+
       setLoading(false);
     } catch (error) {
       console.error('Error al cargar datos del usuario:', error);
@@ -61,21 +67,18 @@ const PerfilUsuario = () => {
     const file = e.target.files[0];
     if (!file) return;
 
-    // Validar tamaño (máximo 5MB)
     if (file.size > 5 * 1024 * 1024) {
       setErrorMessage('La imagen no debe superar los 5MB');
       return;
     }
 
-    // Validar tipo
     if (!file.type.startsWith('image/')) {
       setErrorMessage('Por favor, selecciona una imagen válida');
       return;
     }
 
     setProfileImage(file);
-    
-    // Crear preview
+
     const reader = new FileReader();
     reader.onloadend = () => {
       setImagePreview(reader.result);
@@ -97,7 +100,7 @@ const PerfilUsuario = () => {
       formDataToSend.append('documento', formData.documento);
       formDataToSend.append('correo', formData.correo);
       formDataToSend.append('telefono', formData.telefono);
-      
+
       if (profileImage) {
         formDataToSend.append('fotoPerfil', profileImage);
       }
@@ -114,11 +117,9 @@ const PerfilUsuario = () => {
 
       setUserData(updatedUser);
 
-
       setEditing(false);
       setSuccessMessage('Perfil actualizado correctamente');
-      
-      // Limpiar mensaje después de 3 segundos
+
       setTimeout(() => setSuccessMessage(''), 3000);
     } catch (error) {
       console.error('Error al actualizar perfil:', error);
@@ -145,243 +146,196 @@ const PerfilUsuario = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Cargando información del perfil...</p>
-        </div>
+      <div className="min-h-screen bg-bg-primary flex items-center justify-center">
+        <Loading mode="centered" size="lg" text="Cargando información del perfil..." />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 p-4 md:p-8 pt-24">
+    <div className="min-h-screen bg-bg-primary p-4 md:p-8 pt-24">
       <div className="max-w-4xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="bg-white rounded-2xl shadow-xl overflow-hidden"
+          transition={{ duration: 0.2, ease: 'easeOut' }}
         >
-          {/* Header con fondo gradient */}
-          <div className="bg-gradient-to-r from-emerald-500 to-teal-600 p-6 md:p-8">
-            <div className="flex flex-col md:flex-row md:items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <div className="relative">
-                  <div className="w-20 h-20 md:w-24 md:h-24 rounded-full border-4 border-white/30 bg-gray-200 overflow-hidden flex items-center justify-center">
-                    {imagePreview ? (
-                      <img
-                        src={imagePreview}
-                        alt="Foto de perfil"
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <User className="w-12 h-12 text-gray-400" />
+          <Card>
+            <div className="bg-brand-primary p-6 md:p-8">
+              <div className="flex flex-col md:flex-row md:items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <div className="relative">
+                    <div className="w-20 h-20 md:w-24 md:h-24 rounded-full border-4 border-fg-inverse/30 bg-surface-tertiary overflow-hidden flex items-center justify-center">
+                      {imagePreview ? (
+                        <img
+                          src={imagePreview}
+                          alt="Foto de perfil"
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <User className="w-12 h-12 text-fg-tertiary" />
+                      )}
+                    </div>
+                    {editing && (
+                      <label className="absolute bottom-0 right-0 cursor-pointer">
+                        <IconButton
+                          variant="primary"
+                          size="sm"
+                          icon={Camera}
+                          className="shadow-token-lg"
+                          aria-label="Cambiar foto de perfil"
+                        />
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleImageChange}
+                          className="hidden"
+                        />
+                      </label>
                     )}
                   </div>
-                  {editing && (
-                    <label className="absolute bottom-0 right-0 bg-emerald-600 text-white p-2 rounded-full cursor-pointer hover:bg-emerald-700 transition-colors shadow-lg">
-                      <Camera className="w-4 h-4" />
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleImageChange}
-                        className="hidden"
-                      />
-                    </label>
-                  )}
+                  <div>
+                    <h1 className="text-2xl md:text-3xl font-bold text-fg-inverse">
+                      {userData?.NombreCompleto}
+                    </h1>
+                    <p className="text-fg-inverse/80 mt-1">{userData?.NombreRol}</p>
+                  </div>
                 </div>
-                <div>
-                  <h1 className="text-2xl md:text-3xl font-bold text-white">
-                    {userData?.NombreCompleto}
-                  </h1>
-                  <p className="text-emerald-100 mt-1">{userData?.NombreRol}</p>
-                </div>
+                {!editing && (
+                  <Button
+                    variant="ghost"
+                    size="md"
+                    onClick={() => setEditing(true)}
+                    className="mt-4 md:mt-0 text-fg-inverse border border-fg-inverse/30 bg-surface-primary/20 backdrop-blur-sm hover:bg-surface-primary/30"
+                  >
+                    Editar Perfil
+                  </Button>
+                )}
               </div>
-              {!editing && (
-                <button
-                  onClick={() => setEditing(true)}
-                  className="mt-4 md:mt-0 px-6 py-3 bg-white/20 backdrop-blur-sm text-white rounded-lg hover:bg-white/30 transition-all duration-200 font-medium border border-white/30"
-                >
-                  Editar Perfil
-                </button>
+            </div>
+
+            <div className="p-6 md:p-8">
+              {successMessage && (
+                <div className="mb-4">
+                  <Alert variant="success" title={successMessage} />
+                </div>
               )}
-            </div>
-          </div>
 
-          {/* Mensajes de éxito/error */}
-          {successMessage && (
-            <div className="bg-emerald-50 border-l-4 border-emerald-500 p-4 m-4 rounded-lg">
-              <p className="text-emerald-700">{successMessage}</p>
-            </div>
-          )}
+              {errorMessage && (
+                <div className="mb-4">
+                  <Alert variant="error" title={errorMessage} />
+                </div>
+              )}
 
-          {errorMessage && (
-            <div className="bg-red-50 border-l-4 border-red-500 p-4 m-4 rounded-lg">
-              <p className="text-red-700">{errorMessage}</p>
-            </div>
-          )}
-
-          {/* Contenido del perfil */}
-          <div className="p-6 md:p-8">
-            {editing ? (
-              <form onSubmit={handleSubmit}>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Campo Nombre */}
-                  <div className="space-y-2">
-                    <label className="flex items-center text-sm font-medium text-gray-700">
-                      <User className="w-4 h-4 mr-2" />
-                      Nombre Completo
-                    </label>
-                    <input
-                      type="text"
+              {editing ? (
+                <form onSubmit={handleSubmit}>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <Input
+                      icon={User}
+                      label="Nombre Completo"
                       name="nombreCompleto"
                       value={formData.nombreCompleto}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
                       required
                     />
-                  </div>
-
-                  {/* Campo Documento */}
-                  <div className="space-y-2">
-                    <label className="flex items-center text-sm font-medium text-gray-700">
-                      <FileText className="w-4 h-4 mr-2" />
-                      Documento
-                    </label>
-                    <input
-                      type="text"
+                    <Input
+                      icon={FileText}
+                      label="Documento"
                       name="documento"
                       value={formData.documento}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
                       required
                     />
-                  </div>
-
-                  {/* Campo Email */}
-                  <div className="space-y-2">
-                    <label className="flex items-center text-sm font-medium text-gray-700">
-                      <Mail className="w-4 h-4 mr-2" />
-                      Correo Electrónico
-                    </label>
-                    <input
+                    <Input
+                      icon={Mail}
+                      label="Correo Electrónico"
                       type="email"
                       name="correo"
                       value={formData.correo}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
                       required
                     />
-                  </div>
-
-                  {/* Campo Teléfono */}
-                  <div className="space-y-2">
-                    <label className="flex items-center text-sm font-medium text-gray-700">
-                      <Phone className="w-4 h-4 mr-2" />
-                      Teléfono
-                    </label>
-                    <input
+                    <Input
+                      icon={Phone}
+                      label="Teléfono"
                       type="tel"
                       name="telefono"
                       value={formData.telefono}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
                       placeholder="Opcional"
                     />
                   </div>
-                </div>
 
-                {/* Botones */}
-                <div className="flex flex-col sm:flex-row gap-3 mt-8 pt-6 border-t border-gray-200">
-                  <button
-                    type="submit"
-                    disabled={uploading}
-                    className="flex-1 px-6 py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors font-medium flex items-center justify-center space-x-2 disabled:opacity-50"
-                  >
-                    {uploading ? (
-                      <>
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                        <span>Guardando...</span>
-                      </>
-                    ) : (
-                      <>
-                        <Save className="w-4 h-4" />
-                        <span>Guardar Cambios</span>
-                      </>
-                    )}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleCancel}
-                    className="flex-1 px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium flex items-center justify-center space-x-2"
-                  >
-                    <X className="w-4 h-4" />
-                    <span>Cancelar</span>
-                  </button>
-                </div>
-              </form>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Información del usuario */}
-                <div className="space-y-6">
-                  <div className="flex items-start space-x-3">
-                    <div className="p-2 rounded-lg bg-emerald-100 text-emerald-600">
-                      <User className="w-5 h-5" />
+                  <div className="flex flex-col sm:flex-row gap-3 mt-8 pt-6 border-t border-default">
+                    <Button
+                      type="submit"
+                      variant="primary"
+                      loading={uploading}
+                      icon={Save}
+                      className="flex-1"
+                    >
+                      Guardar Cambios
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      icon={X}
+                      className="flex-1"
+                      onClick={handleCancel}
+                    >
+                      Cancelar
+                    </Button>
+                  </div>
+                </form>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-6">
+                    <div className="flex items-start space-x-3">
+                      <Badge variant="success" size="lg" icon={User} />
+                      <div>
+                        <p className="text-sm text-fg-tertiary">Nombre Completo</p>
+                        <p className="font-medium text-fg-primary">{userData?.NombreCompleto}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-sm text-gray-500">Nombre Completo</p>
-                      <p className="font-medium text-gray-900">{userData?.NombreCompleto}</p>
+                    <div className="flex items-start space-x-3">
+                      <Badge variant="info" size="lg" icon={FileText} />
+                      <div>
+                        <p className="text-sm text-fg-tertiary">Documento</p>
+                        <p className="font-medium text-fg-primary">{userData?.Documento}</p>
+                      </div>
                     </div>
                   </div>
-
-                  <div className="flex items-start space-x-3">
-                    <div className="p-2 rounded-lg bg-blue-100 text-blue-600">
-                      <FileText className="w-5 h-5" />
+                  <div className="space-y-6">
+                    <div className="flex items-start space-x-3">
+                      <Badge variant="brand" size="lg" icon={Mail} />
+                      <div>
+                        <p className="text-sm text-fg-tertiary">Correo Electrónico</p>
+                        <p className="font-medium text-fg-primary">{userData?.Correo}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-sm text-gray-500">Documento</p>
-                      <p className="font-medium text-gray-900">{userData?.Documento}</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="space-y-6">
-                  <div className="flex items-start space-x-3">
-                    <div className="p-2 rounded-lg bg-purple-100 text-purple-600">
-                      <Mail className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-500">Correo Electrónico</p>
-                      <p className="font-medium text-gray-900">{userData?.Correo}</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start space-x-3">
-                    <div className="p-2 rounded-lg bg-orange-100 text-orange-600">
-                      <Phone className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-500">Teléfono</p>
-                      <p className="font-medium text-gray-900">
-                        {userData?.Telefono || 'No registrado'}
-                      </p>
+                    <div className="flex items-start space-x-3">
+                      <Badge variant="warning" size="lg" icon={Phone} />
+                      <div>
+                        <p className="text-sm text-fg-tertiary">Teléfono</p>
+                        <p className="font-medium text-fg-primary">
+                          {userData?.Telefono || 'No registrado'}
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* Instrucciones para subir foto */}
-            {editing && (
-              <div className="mt-8 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                <p className="text-sm text-blue-800">
-                  <strong>Nota:</strong> Puedes subir una foto de perfil en formato JPG, PNG o GIF.
-                  Tamaño máximo: 5MB. La imagen se ajustará automáticamente a 500x500 píxeles.
-                </p>
-              </div>
-            )}
-          </div>
+              {editing && (
+                <div className="mt-8">
+                  <Alert variant="info" title="Nota">
+                    Puedes subir una foto de perfil en formato JPG, PNG o GIF.
+                    Tamaño máximo: 5MB. La imagen se ajustará automáticamente a 500x500 píxeles.
+                  </Alert>
+                </div>
+              )}
+            </div>
+          </Card>
         </motion.div>
       </div>
     </div>
